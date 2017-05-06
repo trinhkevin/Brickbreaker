@@ -17,7 +17,6 @@ from brickbreaker import BrickBreaker
 
 class Server(Protocol):
     def __init__(self):
-        self.command_queue = DeferredQueue()
         self.data_queue = DeferredQueue()
         self.players = 0
 
@@ -27,26 +26,26 @@ class Server(Protocol):
         reactor.run()
 
 class Command(Protocol):
-    def __init__(self, address, server):
-        self.address = address
+    def __init__(self, server):
         self.server = server
 
     def connectionMade(self):
         self.transport.write("Connection Made")
         self.server.players += 1
         if self.server.players == 2:
-            reactor.listenTCP(40110, DataFactory())
-            reactor.listenTCP(41110, DataFactory())
+            self.transport.write("DATA")
+            reactor.listenTCP(40110, DataFactory(self.server))
+            reactor.listenTCP(41110, DataFactory(self.server))
 
 class CommandFactory(Factory):
     def __init__(self, server):
         self.server = server
 
     def buildProtocol(self, address):
-        return Command(address, self.server)
+        return Command( self.server)
 
 class Data(Protocol):
-    def __init__(self):
+    def __init__(self, server):
         pass
 
     def connectionMade(self):
@@ -56,14 +55,15 @@ class Data(Protocol):
         pass
 
 class DataFactory(Factory):
-    def __init__(self):
-        pass
+    def __init__(self, server):
+        self.server = server
 
     def buildProtocol(self):
-        pass
+        return Data(self.server)
 
 if __name__ == '__main__':
     server = Server()
     server.listen()
+
 # reactor.listenTCP(40110, Client())
 # reactor.run()
