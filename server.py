@@ -30,9 +30,9 @@ class Command(Protocol):
     def __init__(self, address, server):
         self.address = address
         self.server = server
-        
+
     def connectionMade(self):
-        self.transport.write("Connection Made")
+        self.transport.write("Command made")
         self.server.players += 1
         if self.server.players == 2:
             reactor.listenTCP(40110, DataFactory())
@@ -46,14 +46,14 @@ class CommandFactory(Factory):
         return Command(address, self.server)
 
 class Data(Protocol):
-    def __init__(self):
-        pass
+    def __init__(self, server):
+        self.server = server
 
     def connectionMade(self):
-        pass
+        self.transport.write("Data made")
 
     def dataReceived(self):
-        pass
+       pass
 
 class DataFactory(Factory):
     def __init__(self):
