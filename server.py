@@ -11,14 +11,14 @@ from twisted.internet.protocol import Protocol
 from twisted.internet import reactor
 from twisted.internet.defer import DeferredQueue
 
-from brickbreaker import GameSpace
+from brickbreaker import BrickBreaker
 
 # Client ---------------------------------------
 
 class Server(Protocol):
     def __init__(self):
-        self.command_queue = DeferredQueue
-        self.data_queue = DeferredQueue
+        self.command_queue = DeferredQueue()
+        self.data_queue = DeferredQueue()
         self.players = 0
 
     def listen(self):
@@ -58,7 +58,7 @@ class Data(Protocol):
 class DataFactory(Factory):
     def __init__(self):
         pass
-    
+
     def buildProtocol(self):
         pass
 

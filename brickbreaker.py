@@ -13,20 +13,6 @@ from pygame.locals import *
 import sprites
 import constants
 
-# Intersection Between Circle and Rectangle
-# From: https://www.reddit.com/r/pygame/comments/2pxiha/rectanglar_circle_hit_detection/
-def intersects(circle, rect):
-    circle_distance_x = abs(circle.rect.centerx-rect.rect.centerx)
-    circle_distance_y = abs(circle.rect.centery-rect.rect.centery)
-    if circle_distance_x > rect.width/2.0+constants.ballRadius or circle_distance_y > rect.height/2.0+constants.ballRadius:
-        return False
-    if circle_distance_x <= rect.width/2.0 or circle_distance_y <= rect.height/2.0:
-        return True
-    corner_x = circle_distance_x-rect.width/2.0
-    corner_y = circle_distance_y-rect.height/2.0
-    corner_distance_sq = corner_x**2.0 +corner_y**2.0
-    return corner_distance_sq <= constants.ballRadius**2.0
-
 class BrickBreaker:
     def run(self):
         # Initialize Window
@@ -126,6 +112,20 @@ class BrickBreaker:
             pygame.display.flip()
 
         pygame.quit()
+
+    # Intersection Between Circle and Rectangle
+    # From: https://www.reddit.com/r/pygame/comments/2pxiha/rectanglar_circle_hit_detection/
+    def intersects(circle, rect):
+        circle_distance_x = abs(circle.rect.centerx-rect.rect.centerx)
+        circle_distance_y = abs(circle.rect.centery-rect.rect.centery)
+        if circle_distance_x > rect.width/2.0+constants.ballRadius or circle_distance_y > rect.height/2.0+constants.ballRadius:
+            return False
+        if circle_distance_x <= rect.width/2.0 or circle_distance_y <= rect.height/2.0:
+            return True
+        corner_x = circle_distance_x-rect.width/2.0
+        corner_y = circle_distance_y-rect.height/2.0
+        corner_distance_sq = corner_x**2.0 +corner_y**2.0
+        return corner_distance_sq <= constants.ballRadius**2.0
 
 if __name__ == '__main__':
     gs = BrickBreaker()
