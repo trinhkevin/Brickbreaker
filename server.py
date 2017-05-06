@@ -15,17 +15,55 @@ from brickbreaker import GameSpace
 
 # Client ---------------------------------------
 
-class Client(Protocol):
+class Server(Protocol):
     def __init__(self):
-    def connectionMade(self):
-    def dataReceived(self, data):
+        self.command_queue = DeferredQueue
+        self.data_queue = DeferredQueue
+        self.players = 0
 
-def ClientFactory(Factory):
-    def __init__(self):
-        self.client = Client()
+    def listen(self):
+        reactor.listenTCP(40125, CommandFactory(self))
+        reactor.listenTCP(41125, CommandFactory(self))
+        reactor.run()
+
+class Command(Protocol):
+    def __init__(self, address, server):
+        self.address = address
+        self.server = server
+
+    def connectionMade(self):
+        self.transport.write("Connection Made")
+        self.server.players += 1
+        if self.server.players == 2:
+            reactor.listenTCP(40110, DataFactory())
+            reactor.listenTCP(41110, DataFactory())
+
+class CommandFactory(Factory):
+    def __init__(self, server):
+        self.server = server
 
     def buildProtocol(self, address):
-        return self.client
+        return Command(address, self.server)
 
+class Data(Protocol):
+    def __init__(self):
+        pass
+
+    def connectionMade(self):
+        pass
+
+    def dataReceived(self):
+        pass
+
+class DataFactory(Factory):
+    def __init__(self):
+        pass
+    
+    def buildProtocol(self):
+        pass
+
+if __name__ == '__main__':
+    server = Server()
+    server.listen()
 # reactor.listenTCP(40110, Client())
 # reactor.run()
