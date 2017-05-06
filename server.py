@@ -30,7 +30,7 @@ class Command(Protocol):
         self.server = server
 
     def connectionMade(self):
-        self.transport.write("Connection Made")
+        self.transport.write("Command made")
         self.server.players += 1
         if self.server.players == 2:
             self.transport.write("DATA")
@@ -46,13 +46,13 @@ class CommandFactory(Factory):
 
 class Data(Protocol):
     def __init__(self, server):
-        pass
+        self.server = server
 
     def connectionMade(self):
-        pass
+        self.transport.write("Data made")
 
     def dataReceived(self):
-        pass
+       pass 
 
 class DataFactory(Factory):
     def __init__(self, server):
