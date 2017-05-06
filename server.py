@@ -13,12 +13,11 @@ from twisted.internet.defer import DeferredQueue
 
 from brickbreaker import BrickBreaker
 
-# Client ---------------------------------------
+# Server ---------------------------------------
 
 class Server(Protocol):
     def __init__(self):
-        self.command_queue = DeferredQueue()
-        self.data_queue = DeferredQueue()
+        self.queue = DeferredQueue()
         self.players = 0
 
     def listen(self):
@@ -26,15 +25,17 @@ class Server(Protocol):
         reactor.listenTCP(41125, CommandFactory(self))
         reactor.run()
 
+# Command --------------------------------------
+
 class Command(Protocol):
-    def __init__(self, address, server):
-        self.address = address
+    def __init__(self, server):
         self.server = server
 
     def connectionMade(self):
         self.transport.write("Command made")
         self.server.players += 1
         if self.server.players == 2:
+            self.transport.write("data")
             reactor.listenTCP(40110, DataFactory())
             reactor.listenTCP(41110, DataFactory())
 
@@ -43,27 +44,27 @@ class CommandFactory(Factory):
         self.server = server
 
     def buildProtocol(self, address):
-        return Command(address, self.server)
+        return Command(self.server)
+
+# Data -----------------------------------------
 
 class Data(Protocol):
     def __init__(self, server):
         self.server = server
 
     def connectionMade(self):
-        self.transport.write("Data made")
+        pass
 
-    def dataReceived(self):
-       pass
+    def dataReceived(self, data):
+        self.server.queue.put(data)
 
 class DataFactory(Factory):
     def __init__(self):
-        pass
+        self.data = Data()
 
     def buildProtocol(self):
-        pass
+        return self.data
 
 if __name__ == '__main__':
     server = Server()
     server.listen()
-# reactor.listenTCP(40110, Client())
-# reactor.run()
