@@ -7,7 +7,7 @@
     source: https://i.ytimg.com/vi/JquobII5VjA/maxresdefault.jpg
 
     *Code*
-    http://stackoverflow.com/questions/43522463/pygame-rect-collision-by-side
+    https://gamedev.stackexchange.com/questions/22609/breakout-collision-detecting-the-side-of-collision
     https://www.reddit.com/r/pygame/comments/2pxiha/rectanglar_circle_hit_detection/
 
 **Bricks**

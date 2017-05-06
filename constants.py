@@ -29,6 +29,6 @@ platformHeight  = 10
 platformWidth   = 100
 platformSpeed   = 30
 ballRadius      = 10
-ballVelocity    = 15
+ballVelocity    = 10
 fastSpeed       = 2
 slowSpeed       = 0.5

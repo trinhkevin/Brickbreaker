@@ -26,8 +26,7 @@ class Scoreboard(pygame.sprite.Sprite):
         self.playerNumber   = playerNumber
         self.player         = player
         self.font           = pygame.font.SysFont("monospace", constants.fontSize)
-        try:
-            self.image = self.font.render(self.getLives() + "PLAYER " + str(self.playerNumber) + " SCORE: " + str(self.player.score) + "    x" + self.getMultiplier(), True, constants.white)
+        self.image = self.font.render(self.getLives() + "PLAYER " + str(self.playerNumber) + " SCORE: " + str(self.player.score) + "    x" + self.getMultiplier(), True, constants.white)
         self.rect           = self.image.get_rect()
         self.rect.centerx   = x
         self.rect.y         = 0
@@ -161,28 +160,33 @@ class Ball(pygame.sprite.Sprite):
                 self.color = constants.white
 
         # Ball Starts Out On Platform
-        if self.isOnPlatform and event is None:
-            self.rect.centerx = self.platform.rect.centerx
-            if self.platform.player.number == 1:
-                self.rect.centery = self.platform.rect.centery + constants.ballRadius + constants.platformHeight / 2
-            elif self.platform.player.number == 2:
-                self.rect.centery = self.platform.rect.centery - constants.ballRadius - constants.platformHeight / 2
-        elif self.isOnPlatform:
-            if event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_SPACE:
-                    self.isOnPlatform = False
+        if self.isOnPlatform:
+            self.platform.player.timer      = 0
+            self.platform.player.multiplier = 1
+            if event:
+                if event.type == pygame.KEYDOWN:
+                    if event.key == pygame.K_SPACE:
+                        self.isOnPlatform = False
+                    if event.key == pygame.K_LEFT or event.key== pygame.K_RIGHT:
+                        self.rect.centerx = self.platform.rect.centerx
+                        if self.platform.player.number == 1:
+                            self.rect.centery = self.platform.rect.centery + constants.ballRadius + constants.platformHeight / 2
+                        elif self.platform.player.number == 2:
+                            self.rect.centery = self.platform.rect.centery - constants.ballRadius - constants.platformHeight / 2
         # Normal Movement
-        elif event is None:
+        else:
             # Increment Timer Not Dead
             # and Set Multiplier
             self.platform.player.timer += 1
-            if (self.platform.player.timer % 60) >= 20:
+            if (self.platform.player.timer / 60) >= 25:
+                self.platform.player.multiplier = 32
+            elif (self.platform.player.timer / 60) >= 20:
                 self.platform.player.multiplier = 16
-            elif (self.platform.player.timer % 60) >= 15:
+            elif (self.platform.player.timer / 60) >= 15:
                 self.platform.player.multiplier = 8
-            elif (self.platform.player.timer % 60) >= 10:
+            elif (self.platform.player.timer / 60) >= 10:
                 self.platform.player.multiplier = 4
-            elif (self.platform.player.timer % 60) >= 5:
+            elif (self.platform.player.timer / 60) >= 5:
                 self.platform.player.multiplier = 2
             else:
                 self.platform.player.multiplier = 1
@@ -195,23 +199,22 @@ class Ball(pygame.sprite.Sprite):
                 self.rect.centerx -= self.speed * self.xVel * math.cos(self.angle)
                 self.rect.centery -= self.speed * self.yVel * math.sin(self.angle)
 
-            # Horizontal Wall Collisions
-            if self.rect.centerx + constants.ballRadius > constants.width or self.rect.centerx - constants.ballRadius < 0:
+            # Vertical Wall Collisions
+            if self.rect.centerx + constants.ballRadius > constants.width:
                 self.xVel *= -1
+                self.rect.centerx = constants.width - constants.ballRadius
+            elif self.rect.centerx - constants.ballRadius < 0:
+                self.xVel *= -1
+                self.rect.centerx = constants.ballRadius
 
-            # Vertical Wall Collision - aka Dead
+            # Horizontal Wall Collision - aka Dead
             elif self.rect.centery + constants.ballRadius > constants.height or self.rect.centery - constants.ballRadius < 0:
                 self.platform.player.lives      -= 1
                 self.isOnPlatform               = True
-                self.platform.player.timer      = 0
-                self.platform.player.multiplier = 1
                 self.speed                      = 1
 
     def collided(self, collide, ctype):
         if ctype == "platform":
-            # Collision Physics
-            self.yVel *= -1
-
             # Change Speed Back, if Changed
             if self.speedChanged:
                 self.speed = 1
@@ -246,22 +249,12 @@ class Ball(pygame.sprite.Sprite):
                     self.platform.player.score += self.platform.player.multiplier * 50
                     self.setInstakill()
 
-            # Collision Physics
-            # From: http://stackoverflow.com/questions/43522463/pygame-rect-collision-by-side
-
-            # Bottom
-            if self.rect.centery - constants.ballRadius >= collide.rect.top and self.rect.centery - constants.ballRadius <= collide.rect.bottom:
-                self.yVel *= -1
-            # Top
-            if self.rect.centery + constants.ballRadius >= collide.rect.bottom and self.rect.centery + constants.ballRadius <= collide.rect.top:
-                self.yVel *= -1
-            # Left
-            if self.rect.centerx - constants.ballRadius >= collide.rect.right and self.rect.centerx - constants.ballRadius <= collide.rect.left:
-                self.xVel *= -1
-            # Right
-            if self.rect.centerx + constants.ballRadius >= collide.rect.left and self.rect.centerx + constants.ballRadius <= collide.rect.right:
-                self.xVel *= -1
-
+        # Collision Side
+        # From: https://gamedev.stackexchange.com/questions/22609/breakout-collision-detecting-the-side-of-collision
+        if self.rect.centery <= collide.rect.centery - (collide.height/2) or self.rect.centery > collide.rect.centery + (collide.height/2):
+            self.yVel *= -1
+        elif self.rect.centerx < collide.rect.centerx or self.rect.centerx > collide.rect.centerx:
+            self.xVel *= -1
 
     def turnBlack(self):
         self.blacktimer = 3 * 60

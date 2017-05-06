@@ -97,8 +97,8 @@ class BrickBreaker:
                     sys.exit()
                 for platform in self.platforms:
                     platform.update(event)
-                for balls in self.balls:
-                    balls.update(event)
+                for ball in self.balls:
+                    ball.update(event)
 
             # Tick
             self.scoreboards.update()
@@ -124,7 +124,7 @@ class BrickBreaker:
             for ball in self.balls:
                 pygame.draw.circle(self.screen, ball.color, ball.rect.center, ball.radius)
             pygame.display.flip()
-            
+
         pygame.quit()
 
 if __name__ == '__main__':
