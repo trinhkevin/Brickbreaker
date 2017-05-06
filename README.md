@@ -1,8 +1,10 @@
 **Members**
+
     Brian Byrne - bbyrne5
     Kevin Trinh - ktrinh1
 
 **Sources**
+
     stars.png
     
     source: https://i.ytimg.com/vi/JquobII5VjA/maxresdefault.jpg
