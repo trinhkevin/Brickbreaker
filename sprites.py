@@ -114,8 +114,6 @@ class Brick(pygame.sprite.Sprite):
     def update(self):
         # If it's the Rainbow Block, Cycle
         # Through Colors
-        if self.life <= 0 and self.color != constants.gray:
-            self.kill()
         if self.rainbow:
             self.current += 1
             if self.current > constants.ncolors - 1:
@@ -218,7 +216,7 @@ class Ball(pygame.sprite.Sprite):
             # Change Speed Back, if Changed
             if self.speedChanged:
                 self.speed = 1
-                if self.color != constants.black or self.color != constants.red:
+                if self.color != constants.black and self.color != constants.red:
                     self.color = constants.white
         elif ctype == "brick":
             # Damage
@@ -226,9 +224,10 @@ class Ball(pygame.sprite.Sprite):
                 collide.life -= 100
             elif collide.color != constants.gray:
                 collide.life -= 1
-
+                
             # Brick Break
             if collide.life <= 0:
+                collide.kill()
                 if collide.rainbow:
                     self.platform.player.score += self.platform.player.multiplier * 100
                     self.other.turnBlack()

@@ -6,7 +6,9 @@
 '''
 
 from __future__ import print_function
+
 from twisted.internet.protocol import Factory
+from twisted.internet.protocol import ClientFactory
 from twisted.internet.protocol import Protocol
 from twisted.internet import reactor
 from twisted.internet.defer import DeferredQueue
@@ -21,9 +23,9 @@ class Server(Protocol):
         
 
     def listen(self):
-        reactor.listenTCP(40125, CommandFactory(self, 1))
-        reactor.listenTCP(41125, CommandFactory(self, 2))
-        reactor.run()
+    self.player1 = reactor.listenTCP(40125, CommandFactory(self))
+    self.player2 = reactor.listenTCP(41125, CommandFactory(self))
+    reactor.run()
 
 # Command --------------------------------------
 
@@ -52,7 +54,7 @@ class Command(Protocol):
 class CommandFactory(Factory):
     def __init__(self, server, player):
         self.command = Command(server, player)
-    
+
     def buildProtocol(self, address):
         return self.command
 

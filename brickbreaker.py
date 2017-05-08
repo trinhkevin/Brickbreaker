@@ -93,9 +93,9 @@ class BrickBreaker:
 
             # Check for Collisions and Calculate Points
             for ball in self.balls:
-                for brick in pygame.sprite.spritecollide(ball, self.bricks, False, intersects):
+                for brick in pygame.sprite.spritecollide(ball, self.bricks, False, self.intersects):
                     ball.collided(brick, "brick")
-                for platform in pygame.sprite.spritecollide(ball, self.platforms, False, intersects):
+                for platform in pygame.sprite.spritecollide(ball, self.platforms, False, self.intersects):
                     ball.collided(platform, "platform")
 
             # Draw Sprites
@@ -115,7 +115,7 @@ class BrickBreaker:
 
     # Intersection Between Circle and Rectangle
     # From: https://www.reddit.com/r/pygame/comments/2pxiha/rectanglar_circle_hit_detection/
-    def intersects(circle, rect):
+    def intersects(self, circle, rect):
         circle_distance_x = abs(circle.rect.centerx-rect.rect.centerx)
         circle_distance_y = abs(circle.rect.centery-rect.rect.centery)
         if circle_distance_x > rect.width/2.0+constants.ballRadius or circle_distance_y > rect.height/2.0+constants.ballRadius:
