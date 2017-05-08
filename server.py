@@ -18,6 +18,7 @@ from brickbreaker import BrickBreaker
 class Server(Protocol):
     def __init__(self):
         self.queue = DeferredQueue()
+        
 
     def listen(self):
         reactor.listenTCP(40125, CommandFactory(self, 1))
