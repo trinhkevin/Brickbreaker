@@ -40,7 +40,7 @@ class Connect(Protocol):
         self.brickBreaker.dataReceived(data)
 
     def connectionLost(self, reason):
-        Factory.clients.remove(self)
+        reactor.stop()
 
     def write(self, data):
         self.transport.write(data)
@@ -69,7 +69,7 @@ class Listen(Protocol):
         self.brickBreaker.dataReceived(data)
 
     def connectionLost(self, reason):
-        Factory.clients.remove(self)
+        reactor.stop()
 
     def write(self, data):
         self.transport.write(data)
