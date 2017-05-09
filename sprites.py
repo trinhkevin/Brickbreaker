@@ -1,3 +1,5 @@
+#!/bin/env python2.7
+
 '''
     Objects
     Pygame + Twisted
@@ -5,6 +7,7 @@
     05/10/2017
 '''
 
+from __future__ import print_function
 import os, sys
 import math
 import pygame
@@ -36,11 +39,11 @@ class Scoreboard(pygame.sprite.Sprite):
 
     def getLives(self):
         if self.player.lives == 3:
-            return "♥♥♥"
+            return "***"
         elif self.player.lives == 2:
-            return " ♥♥"
+            return " **"
         elif self.player.lives == 1:
-            return "   ♥"
+            return "   *"
         else:
             return "   "
 
@@ -59,6 +62,7 @@ class Platform(pygame.sprite.Sprite):
         self.rect.centerx = x
         self.rect.centery = y
 
+    '''
     def update(self, event):
         if event.type == pygame.KEYDOWN:
             if event.key == pygame.K_LEFT:
@@ -69,6 +73,17 @@ class Platform(pygame.sprite.Sprite):
                 self.rect.x += constants.platformSpeed
                 if self.rect.x > constants.width - constants.platformWidth:
                     self.rect.x = constants.width - constants.platformWidth
+    '''
+
+    def moveLeft(self):
+        self.rect.x -= constants.platformSpeed
+        if self.rect.x < 0:
+            self.rect.x = 0
+
+    def moveRight(self):
+        self.rect.x += constants.platformSpeed
+        if self.rect.x > constants.width - constants.platformWidth:
+            self.rect.x = constants.width - constants.platformWidth
 
 class Brick(pygame.sprite.Sprite):
     def __init__(self, x, y, gray):
@@ -144,37 +159,21 @@ class Ball(pygame.sprite.Sprite):
         self.xVel  = constants.ballVelocity
         self.yVel  = constants.ballVelocity
 
-    def update(self, event=None):
-        # Black Timer
-        if self.blacktimer > 0:
-            self.blacktimer -= 1
-            if self.blacktimer <= 0:
-                self.color = constants.white
-
-        # Instakill Timer
-        if self.instatimer > 0:
-            self.instatimer -= 1
-            if self.instatimer <= 0:
-                self.color = constants.white
+    def update(self):
 
         # Ball Starts Out On Platform
         if self.isOnPlatform:
             self.platform.player.timer      = 0
             self.platform.player.multiplier = 1
-            if event:
-                if event.type == pygame.KEYDOWN:
-                    if event.key == pygame.K_SPACE:
-                        self.isOnPlatform = False
-                    if event.key == pygame.K_LEFT or event.key== pygame.K_RIGHT:
-                        self.rect.centerx = self.platform.rect.centerx
-                        if self.platform.player.number == 1:
-                            self.rect.centery = self.platform.rect.centery + constants.ballRadius + constants.platformHeight / 2
-                        elif self.platform.player.number == 2:
-                            self.rect.centery = self.platform.rect.centery - constants.ballRadius - constants.platformHeight / 2
+            self.rect.centerx = self.platform.rect.centerx
+            if self.platform.player.number == 1:
+                self.rect.centery = self.platform.rect.centery + constants.ballRadius + constants.platformHeight / 2
+            elif self.platform.player.number == 2:
+                self.rect.centery = self.platform.rect.centery - constants.ballRadius - constants.platformHeight / 2
+
         # Normal Movement
         else:
-            # Increment Timer Not Dead
-            # and Set Multiplier
+            # Multiplier
             self.platform.player.timer += 1
             if (self.platform.player.timer / 60) >= 25:
                 self.platform.player.multiplier = 32
@@ -211,6 +210,19 @@ class Ball(pygame.sprite.Sprite):
                 self.isOnPlatform               = True
                 self.speed                      = 1
 
+        # Black Timer
+        if self.blacktimer > 0:
+            self.blacktimer -= 1
+            if self.blacktimer <= 0:
+                self.color = constants.white
+
+        # Instakill Timer
+        if self.instatimer > 0:
+            self.instatimer -= 1
+            if self.instatimer <= 0:
+                self.color = constants.white
+
+
     def collided(self, collide, ctype):
         if ctype == "platform":
             # Change Speed Back, if Changed
@@ -224,7 +236,7 @@ class Ball(pygame.sprite.Sprite):
                 collide.life -= 100
             elif collide.color != constants.gray:
                 collide.life -= 1
-                
+
             # Brick Break
             if collide.life <= 0:
                 collide.kill()
@@ -272,6 +284,9 @@ class Ball(pygame.sprite.Sprite):
         self.speed          = constants.slowSpeed
         self.color          = constants.blue
         self.speedChanged   = True
+
+    def releaseBall(self):
+        self.isOnPlatform = False
 
 class Player():
     def __init__(self, number):
