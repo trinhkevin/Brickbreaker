@@ -224,6 +224,12 @@ class Ball(pygame.sprite.Sprite):
 
 
     def collided(self, collide, ctype):
+        # Collision Side
+        # From: https://gamedev.stackexchange.com/questions/22609/breakout-collision-detecting-the-side-of-collision
+        if self.rect.centery <= collide.rect.centery - (collide.height/2) or self.rect.centery > collide.rect.centery + (collide.height/2):
+            self.yVel *= -1
+        elif self.rect.centerx < collide.rect.centerx or self.rect.centerx > collide.rect.centerx:
+            self.xVel *= -1
         if ctype == "platform":
             # Change Speed Back, if Changed
             if self.speedChanged:
@@ -259,13 +265,6 @@ class Ball(pygame.sprite.Sprite):
                 elif collide.color == constants.orange:
                     self.platform.player.score += self.platform.player.multiplier * 50
                     self.setInstakill()
-
-        # Collision Side
-        # From: https://gamedev.stackexchange.com/questions/22609/breakout-collision-detecting-the-side-of-collision
-        if self.rect.centery <= collide.rect.centery - (collide.height/2) or self.rect.centery > collide.rect.centery + (collide.height/2):
-            self.yVel *= -1
-        elif self.rect.centerx < collide.rect.centerx or self.rect.centerx > collide.rect.centerx:
-            self.xVel *= -1
 
     def turnBlack(self):
         self.blacktimer = 3 * 60

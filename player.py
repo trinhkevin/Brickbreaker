@@ -59,7 +59,7 @@ class Listen(Protocol):
         print("Game connection established")
         self.brickBreaker.initialize()
         self.brickBreaker.initializeBricks()
-        LoopingCall(self.brickBreaker.dumpData).start(1)
+        LoopingCall(self.brickBreaker.dumpData).start(0.5)
         LoopingCall(self.brickBreaker.play).start(0.015)
 
     def dataReceived(self, data):
