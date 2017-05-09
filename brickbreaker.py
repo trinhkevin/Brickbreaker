@@ -176,7 +176,6 @@ class BrickBreaker:
                     brick.rect.x = b["rectX"]
                     brick.rect.y = b["rectY"]
                     self.bricks.add(brick)
-                    print("ADDED BRICK")
 
                 #self.ball1.platform = data["ball1"]["platform"]
                 self.ball1.radius = data["ball1"]["radius"]
