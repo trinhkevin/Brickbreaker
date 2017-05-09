@@ -28,10 +28,11 @@
 **Controls**
     
     Use Spacebar to shoot the ball off of the platform then use the arrows to move the platform from side to side. 
-    Everytime you miss the ball one of the health bars (represented by *) will go down and the ball will reset to the platform. 
-    When a player has no more *'s that player loses and the game is over. The goal is to just survive longer than your opponent. 
-    There is a bar of grey bricks in the middle that the ball cannot pass through so each player can only affect their side of the board.
-    The detailed descriptions of each type of brick and their occurance rates are below except for the unbreakable grey blocks. 
+    Everytime you miss the ball one of the health bars (represented by * next to each player on the scoreboard) 
+    will go down and the ball will reset to the platform. When a player has no more *'s that player loses and the game is over. 
+    The goal is to just survive longer than your opponent. There is a bar of grey bricks in the middle that the ball cannot 
+    pass through so each player can only affect their side of the board. The detailed descriptions of each type of brick and their
+    occurance rates are below except for the unbreakable grey blocks. 
     
 
 **Bricks**
