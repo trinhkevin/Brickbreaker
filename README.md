@@ -18,7 +18,7 @@
     To run the game you first must have all the files: brickbreaker.py, player.py, sprites.py, constants.py, and stars.png. 
     Then you must chose a port to connect to as well as an address, i.e. port 40125 on ash.campus.nd.edu. 
     Each player must use the same port and address. Once that is chosen you run the game by calling player.py 
-    with a player number (1 or 2) the port, and the address. It is important to use python2.7 because of the twisted library. 
+    with a player number (1 or 2), the port, and the address. It is important to use python2.7 because of the twisted library. 
         
         python2.7 player.py -u [PLAYER NUMBER] -p [PORT NUMBER] -s [ADDRESS]
         
